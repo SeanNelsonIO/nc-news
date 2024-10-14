@@ -4,10 +4,12 @@ const app = express();
 // controller imports here
 const { getTopics } = require("./controllers/topics-controller");
 const { getApiEndpoints } = require("./controllers/api-controller");
+const { getArticleById } = require("./controllers/articles-controller");
 
 // routing
 app.get("/api/topics", getTopics);
 app.get("/api", getApiEndpoints);
+app.get("/api/articles/:article_id", getArticleById);
 
 // error-handling middleware
 app.use((err, req, res, next) => {
