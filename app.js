@@ -3,14 +3,14 @@ const app = express();
 
 // controller imports here
 const { getTopics } = require("./controllers/topics-controller");
+const { getApiEndpoints } = require("./controllers/api-controller");
 
-app.use(express.json());
-
+// routing
 app.get("/api/topics", getTopics);
+app.get("/api", getApiEndpoints);
 
 // error-handling middleware
 app.use((err, req, res, next) => {
-  console.log(err);
   res.status(500).send({ msg: "Internal Server Error" });
 });
 
