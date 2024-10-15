@@ -16,14 +16,24 @@ exports.fetchArticleById = (article_id) => {
       WHERE article_id = $1`,
       [article_id]
     )
-    .then((result) => {
-      const article = result.rows[0];
-      if (!article) {
-        const error = new Error("Article not found");
-        error.statusCode = 404;
-        throw error;
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({
+          message: "Article not found",
+          statusCode: 404,
+        });
       }
-      return article;
+      return rows[0];
+    })
+    .catch((err) => {
+      // PostgreSQL error: invalid_text_representation
+      if (err.code === "22P02") {
+        return Promise.reject({
+          message: "Invalid article ID",
+          statusCode: 400,
+        });
+      }
+      return Promise.reject(err);
     });
 };
 
@@ -31,18 +41,24 @@ exports.fetchArticles = () => {
   return db
     .query(
       `SELECT
-        author,
-        title,
-        article_id,
-        topic,
-        created_at,
-        votes,
-        article_img_url,
-        (SELECT COUNT(*) FROM comments WHERE comments.article_id = articles.article_id) AS comment_count
-        FROM articles
-        ORDER BY created_at DESC`
+        articles.author,
+        articles.title,
+        articles.article_id,
+        articles.topic,
+        articles.created_at,
+        articles.votes,
+        articles.article_img_url,
+        COUNT(comments.comment_id) AS comment_count
+      FROM articles
+      LEFT JOIN comments
+      ON articles.article_id = comments.article_id
+      GROUP BY articles.article_id
+      ORDER BY articles.created_at DESC`
     )
-    .then((result) => {
-      return result.rows; // returns the array of articles with the added comment_count
+    .then(({ rows }) => {
+      return rows;
+    })
+    .catch((err) => {
+      throw err;
     });
 };
