@@ -11,8 +11,19 @@ afterAll(() => {
 });
 
 describe("GET /api/articles/:article_id", () => {
-  test("should respond with a 200 status code when an article exists and has all required properties", () => {
+  test("should respond with the correct article_id", () => {
     const validArticleId = 1;
+
+    return request(app)
+      .get(`/api/articles/${validArticleId}`)
+      .expect(200)
+      .then((response) => {
+        expect(response.body.article.article_id).toBe(validArticleId);
+      });
+  });
+
+  test("should respond with a 200 status code when an article exists and has all required properties", () => {
+    const validArticleId = 2;
     return request(app)
       .get(`/api/articles/${validArticleId}`)
       .expect(200)
@@ -44,7 +55,7 @@ describe("GET /api/articles/:article_id", () => {
       });
   });
 
-  test("should respond with a 404 status if an article with the given id does not exist", () => {
+  test("should respond with a 404 status when the article ID does not exist", () => {
     const invalidArticleId = 111;
     return request(app)
       .get(`/api/articles/${invalidArticleId}`)
@@ -63,7 +74,7 @@ describe("GET /api/articles/:article_id", () => {
       });
   });
 
-  test("should respond with a 400 status for invalid article id", () => {
+  test("should respond with a 400 status for invalid article ids", () => {
     return request(app)
       .get("/api/articles/one-hundred")
       .expect(400)
