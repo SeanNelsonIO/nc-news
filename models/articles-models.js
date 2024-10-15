@@ -26,3 +26,23 @@ exports.fetchArticleById = (article_id) => {
       return article;
     });
 };
+
+exports.fetchArticles = () => {
+  return db
+    .query(
+      `SELECT
+        author,
+        title,
+        article_id,
+        topic,
+        created_at,
+        votes,
+        article_img_url,
+        (SELECT COUNT(*) FROM comments WHERE comments.article_id = articles.article_id) AS comment_count
+        FROM articles
+        ORDER BY created_at DESC`
+    )
+    .then((result) => {
+      return result.rows; // returns the array of articles with the added comment_count
+    });
+};
