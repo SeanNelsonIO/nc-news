@@ -19,7 +19,9 @@ exports.fetchArticleById = (article_id) => {
     .then((result) => {
       const article = result.rows[0];
       if (!article) {
-        return null;
+        const error = new Error("Article not found");
+        error.statusCode = 404;
+        throw error;
       }
       return article;
     });
