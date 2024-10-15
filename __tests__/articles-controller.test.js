@@ -11,16 +11,7 @@ afterAll(() => {
 });
 
 describe("GET /api/articles", () => {
-  test("should respond with a 200 status code and an array of article objects", () => {
-    return request(app)
-      .get("/api/articles")
-      .expect(200)
-      .then((response) => {
-        expect(Array.isArray(response.body)).toBe(true);
-      });
-  });
-
-  test("should respond with a 200 status code and have the specified properties", () => {
+  test("should respond with a 200 status code, have the specified properties, and return the correct number of articles", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -35,11 +26,12 @@ describe("GET /api/articles", () => {
         expect(response.body[0]).toHaveProperty("votes");
         expect(response.body[0]).toHaveProperty("article_img_url");
         expect(response.body[0]).toHaveProperty("comment_count");
+
+        expect(response.body.length).toBe(13);
       });
   });
 });
 
-////////////////////////////////
 describe("GET /api/articles/:article_id", () => {
   test("should respond with a 200 status code and with the correct article_id", () => {
     const validArticleId = 1;
