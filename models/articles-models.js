@@ -19,8 +19,30 @@ exports.fetchArticleById = (article_id) => {
     .then((result) => {
       const article = result.rows[0];
       if (!article) {
-        return null;
+        const error = new Error("Article not found");
+        error.statusCode = 404;
+        throw error;
       }
       return article;
+    });
+};
+
+exports.fetchArticles = () => {
+  return db
+    .query(
+      `SELECT
+        author,
+        title,
+        article_id,
+        topic,
+        created_at,
+        votes,
+        article_img_url,
+        (SELECT COUNT(*) FROM comments WHERE comments.article_id = articles.article_id) AS comment_count
+        FROM articles
+        ORDER BY created_at DESC`
+    )
+    .then((result) => {
+      return result.rows; // returns the array of articles with the added comment_count
     });
 };
