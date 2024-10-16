@@ -1,5 +1,6 @@
 const db = require("../db/connection");
 
+// fetchArticleById() in articles-model.js
 exports.fetchArticleById = (article_id) => {
   return db
     .query(
