@@ -23,17 +23,7 @@ exports.fetchArticleById = (article_id) => {
           statusCode: 404,
         });
       }
-      return rows[0];
-    })
-    .catch((err) => {
-      // PostgreSQL error: invalid_text_representation
-      if (err.code === "22P02") {
-        return Promise.reject({
-          message: "Invalid article ID",
-          statusCode: 400,
-        });
-      }
-      return Promise.reject(err);
+      return rows[0]; // success response
     });
 };
 
@@ -56,9 +46,6 @@ exports.fetchArticles = () => {
       ORDER BY articles.created_at DESC`
     )
     .then(({ rows }) => {
-      return rows;
-    })
-    .catch((err) => {
-      throw err;
+      return rows; // success response
     });
 };
