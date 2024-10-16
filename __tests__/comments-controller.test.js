@@ -63,3 +63,23 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe.only("POST /api/articles/:article_id/comments", () => {
+  test("should respond with a 201 status code when passed a valid username and article ID", () => {
+    const newComment = {
+      author: "butter_bridge", // have tried 'username' too
+      body: "This is a test comment",
+    };
+
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then((response) => {
+        const { comment } = response.body;
+        expect(comment).toHaveProperty("comment_id");
+        expect(comment.body).toBe(newComment.body);
+        expect(comment.author).toBe(newComment.author); // have tried 'username' too
+      });
+  });
+});
